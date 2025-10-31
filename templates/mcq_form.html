@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Assessment - MCQ Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            color: #333;
+        }
+        
+        .question-card {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .question-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 16px;
+            color: #495057;
+        }
+        
+        .option.selected {
+            background: #e7f3ff;
+            border-color: #667eea;
+        }
+        
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Results Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .score-card {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .score-label {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .result-item {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .result-item.correct {
+            border-color: #28a745;
+            background: #f1f9f3;
+        }
+        
+        .result-item.incorrect {
+            border-color: #dc3545;
+            background: #fef5f5;
+        }
+        
+        .result-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        
+        .explanation {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Technical Assessment</h1>
+            <p>{{ job_title }}</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <p><strong>Candidate:</strong> {{ candidate_email }}</p>
+                <p><strong>Total Questions:</strong> {{ questions|length }}</p>
+                <p><strong>Instructions:</strong> Select one answer for each question. You will receive instant feedback after submission.</p>
+            </div>
+            
+            <form id="mcqForm">
+                <input type="hidden" id="candidate_email" value="{{ candidate_email }}">
+                <input type="hidden" id="job_id" value="{{ job_id }}">
+                <input type="hidden" id="job_title" value="{{ job_title }}">
+                
+                {% for question in questions %}
+                {% set question_num = loop.index %}
+                <div class="question-card">
+                    <span class="question-number">Question {{ question_num }}</span>
+                    <div class="question-text">{{ question.question }}</div>
+                    <div class="options">
+                        {% for key, value in question.options.items() %}
+                        <div class="option" onclick="selectOption({{ question_num }}, '{{ key }}')">
+                            <input type="radio" 
+                                   name="question_{{ question_num }}" 
+                                   id="q{{ question_num }}_{{ key }}"
+                                   value="{{ key }}">
+                            <label for="q{{ question_num }}_{{ key }}">
+                                <strong>{{ key }}.</strong> {{ value }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Submit Answers
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Results Modal -->
+    <div class="modal" id="resultsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Assessment Results</h2>
+            </div>
+            <div class="modal-body" id="resultsBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Scoring your answers...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function selectOption(questionNum, option) {
+            // Check the radio button
+            document.getElementById(`q${questionNum}_${option}`).checked = true;
+            
+            // Update visual selection
+            const options = document.querySelectorAll(`input[name="question_${questionNum}"]`).forEach(radio => {
+                radio.parentElement.classList.remove('selected');
+            });
+            document.getElementById(`q${questionNum}_${option}`).parentElement.classList.add('selected');
+        }
+        
+        document.getElementById('mcqForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Collect answers
+            const totalQuestions = {{ questions|length }};
+            const answers = {};
+            
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="question_${i}"]:checked`);
+                if (selected) {
+                    answers[i] = selected.value;
+                }
+            }
+            
+            // Validate all questions answered
+            if (Object.keys(answers).length < totalQuestions) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+            
+            // Show modal with loading
+            document.getElementById('resultsModal').classList.add('show');
+            
+            // Submit answers
+            try {
+                const response = await fetch('/submit_mcq', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        candidate_email: document.getElementById('candidate_email').value,
+                        job_id: document.getElementById('job_id').value,
+                        job_title: document.getElementById('job_title').value,
+                        answers: answers
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                    document.getElementById('resultsModal').classList.remove('show');
+                }
+            } catch (error) {
+                alert('Error submitting answers: ' + error.message);
+                document.getElementById('resultsModal').classList.remove('show');
+            }
+        });
+        
+        function displayResults(data) {
+            const scorePercentage = data.score.toFixed(1);
+            const isPassing = data.score >= 60;
+            
+            let html = `
+                <div class="score-card">
+                    <div class="score-label">Your Score</div>
+                    <div class="score-value">${scorePercentage}%</div>
+                    <p>${data.correct_answers} out of ${data.total_questions} correct</p>
+                    ${isPassing ? 
+                        '<p style="color: #28a745; font-weight: bold; margin-top: 10px;">Great job! You may be invited for an interview.</p>' : 
+                        '<p style="color: #dc3545; font-weight: bold; margin-top: 10px;">Thank you for your time. We will review all applications.</p>'
+                    }
+                </div>
+                
+                <h3 style="margin-bottom: 20px;">Detailed Results:</h3>
+            `;
+            
+            data.results.forEach((result, index) => {
+                const isCorrect = result.is_correct;
+                html += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div style="display: flex; align-items: start;">
+                            <span class="result-icon">${isCorrect ? '✅' : '❌'}</span>
+                            <div style="flex: 1;">
+                                <strong>Question ${result.question_number}:</strong> ${result.question}
+                                <p style="margin-top: 10px;">
+                                    <strong>Your answer:</strong> ${result.user_answer}
+                                    ${!isCorrect ? `<br><strong>Correct answer:</strong> ${result.correct_answer}` : ''}
+                                </p>
+                                <div class="explanation">
+                                    <strong>Explanation:</strong> ${result.explanation}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('resultsBody').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

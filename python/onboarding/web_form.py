@@ -1,0 +1,211 @@
+"""
+Web-based onboarding form using Flask
+FREE alternative to Google Forms
+"""
+
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from datetime import datetime
+import json
+import os
+import logging
+from pathlib import Path
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Initialize Flask app
+app = Flask(__name__, 
+            template_folder='../../templates',
+            static_folder='../../static')
+
+# Data directory for form responses
+FORMS_DIR = Path(__file__).parent.parent.parent / 'data' / 'forms'
+FORMS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+@app.route('/')
+def index():
+    """Landing page"""
+    return render_template('form_landing.html')
+
+
+@app.route('/onboarding')
+def onboarding_form():
+    """
+    Onboarding form page
+    Query params: candidate_email, job_id
+    """
+    candidate_email = request.args.get('candidate_email', '')
+    job_id = request.args.get('job_id', '')
+    
+    logger.info(f"Onboarding form accessed for: {candidate_email}, job: {job_id}")
+    
+    return render_template('onboarding_form.html', 
+                         candidate_email=candidate_email,
+                         job_id=job_id)
+
+
+@app.route('/submit', methods=['POST'])
+def submit_form():
+    """
+    Handle form submission and automatically send MCQ assessment
+    """
+    try:
+        # Get form data
+        form_data = request.form.to_dict()
+        
+        # Add metadata
+        submission = {
+            'submission_time': datetime.now().isoformat(),
+            'candidate_email': form_data.get('email', 'unknown'),
+            'job_id': form_data.get('job_id', 'unknown'),
+            'form_data': form_data
+        }
+        
+        # Generate filename
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        email_safe = submission['candidate_email'].replace('@', '_at_').replace('.', '_')
+        filename = f"response_{timestamp}_{email_safe}.json"
+        
+        # Save to file
+        filepath = FORMS_DIR / filename
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(submission, f, indent=2, ensure_ascii=False)
+        
+        logger.info(f"Form submission saved: {filename}")
+        
+        # AUTOMATIC: Generate MCQ questions and send email immediately
+        try:
+            from python.questions.mcq_email_automation import MCQEmailSender, get_mcq_form_url
+            from python.questions.mcq_generator import MCQGenerator
+            from dotenv import load_dotenv
+            import os
+            
+            load_dotenv()
+            
+            # Load job details to get job title and description
+            job_id = form_data.get('job_id')
+            jobs_dir = Path(__file__).parent.parent.parent / 'data' / 'jobs'
+            job_title = "Position"  # Default
+            job_description = ""
+            required_skills = []
+            
+            for file in jobs_dir.glob("job_*.json"):
+                with open(file, 'r', encoding='utf-8') as f:
+                    job = json.load(f)
+                    if str(job.get('job_id')) == str(job_id):
+                        job_title = job.get('title', '').replace('*', '').strip()
+                        job_description = job.get('description', '')
+                        required_skills = job.get('required_skills', [])
+                        break
+            
+            # Generate MCQ questions first
+            mcq_generator = MCQGenerator()
+            questions = mcq_generator.generate_mcq_questions(
+                job_title=job_title,
+                job_description=job_description,
+                required_skills=required_skills,
+                num_questions=5
+            )
+            
+            # Save questions
+            mcq_generator.save_questions(
+                questions=questions,
+                job_id=job_id,
+                job_title=job_title
+            )
+            
+            logger.info(f"Generated {len(questions)} MCQ questions for {job_title}")
+            
+            # Send MCQ email
+            email_sender = MCQEmailSender(
+                sender_email=os.getenv('GMAIL_EMAIL'),
+                app_password=os.getenv('GMAIL_APP_PASSWORD')
+            )
+            
+            mcq_url = get_mcq_form_url(
+                candidate_email=submission['candidate_email'],
+                job_id=job_id,
+                job_title=job_title
+            )
+            
+            email_sender.send_mcq_email(
+                candidate_email=submission['candidate_email'],
+                candidate_name=form_data.get('full_name', 'Candidate'),
+                job_title=job_title,
+                job_id=job_id,
+                mcq_url=mcq_url
+            )
+            
+            logger.info(f"MCQ assessment email sent automatically to: {submission['candidate_email']}")
+            
+        except Exception as mcq_error:
+            logger.error(f"Failed to send MCQ email automatically: {mcq_error}")
+            # Don't fail the form submission if email fails
+        
+        # Return success page
+        return render_template('form_success.html', 
+                             candidate_name=form_data.get('full_name', 'Candidate'))
+        
+    except Exception as e:
+        logger.error(f"Error saving form submission: {e}")
+        return render_template('form_error.html', error=str(e)), 500
+
+
+@app.route('/api/responses')
+def get_responses():
+    """
+    API endpoint to retrieve form responses
+    Query params: email, job_id
+    """
+    try:
+        email = request.args.get('email')
+        job_id = request.args.get('job_id')
+        
+        responses = []
+        for file in FORMS_DIR.glob('response_*.json'):
+            with open(file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+                # Filter by email or job_id if provided
+                if email and data.get('candidate_email') != email:
+                    continue
+                if job_id and data.get('job_id') != job_id:
+                    continue
+                    
+                responses.append(data)
+        
+        return jsonify({
+            'success': True,
+            'count': len(responses),
+            'responses': responses
+        })
+        
+    except Exception as e:
+        logger.error(f"Error retrieving responses: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return jsonify({'status': 'healthy', 'service': 'onboarding-form'})
+
+
+def run_server(host='127.0.0.1', port=5000, debug=False):
+    """
+    Run the Flask server
+    
+    Args:
+        host: Host to bind to (default: 127.0.0.1)
+        port: Port to bind to (default: 5000)
+        debug: Enable debug mode
+    """
+    logger.info(f"Starting onboarding form server on http://{host}:{port}")
+    logger.info(f"Form URL: http://{host}:{port}/onboarding")
+    app.run(host=host, port=port, debug=debug)
+
+
+if __name__ == '__main__':
+    run_server(debug=True)

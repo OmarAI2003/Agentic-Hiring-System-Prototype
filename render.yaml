@@ -1,0 +1,46 @@
+services:
+  # HR Control Panel
+  - type: web
+    name: agentic-hiring-hr-panel
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start_hr_panel.py
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GMAIL_EMAIL
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: ONBOARDING_FORM_URL
+        value: https://agentic-hiring-onboarding.onrender.com/onboarding
+      - key: MCQ_FORM_URL
+        value: https://agentic-hiring-mcq.onrender.com/mcq
+      - key: PORT
+        value: 3000
+
+  # Onboarding Form Server
+  - type: web
+    name: agentic-hiring-onboarding
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start_form_server.py
+    envVars:
+      - key: PORT
+        value: 5000
+
+  # MCQ Assessment Server
+  - type: web
+    name: agentic-hiring-mcq
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start_mcq_server.py
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GMAIL_EMAIL
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: PORT
+        value: 5001

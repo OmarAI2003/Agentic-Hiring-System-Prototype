@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Successful</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .success-card {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        .checkmark svg {
+            width: 50px;
+            height: 50px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.5s ease-out 0.3s forwards;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes drawCheck {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .candidate-name {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .next-steps {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .next-steps h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .next-steps ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .next-steps li {
+            padding: 10px 0;
+            color: #555;
+            display: flex;
+            align-items: start;
+        }
+        
+        .next-steps li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div class="checkmark">
+            <svg viewBox="0 0 52 52">
+                <polyline points="14 27 22 35 38 19"/>
+            </svg>
+        </div>
+        
+        <h1>🎉 Application Submitted Successfully!</h1>
+        
+        <p>Thank you, <span class="candidate-name">{{ candidate_name }}</span>!</p>
+        <p>We've received your onboarding form and our team will review it shortly.</p>
+        
+        <div class="next-steps">
+            <h2>📋 What Happens Next?</h2>
+            <ul>
+                <li>Our recruitment team will review your submission within 24-48 hours</li>
+                <li>You'll receive an email confirmation at the address you provided</li>
+                <li>We'll schedule an interview if your profile matches our requirements</li>
+                <li>Check your email regularly for updates on your application status</li>
+            </ul>
+        </div>
+        
+        <p style="margin-top: 30px; color: #999; font-size: 0.9em;">
+            You can now close this window
+        </p>
+    </div>
+</body>
+</html>

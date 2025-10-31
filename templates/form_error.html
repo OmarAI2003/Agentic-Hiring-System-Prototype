@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Error</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 3em;
+            color: white;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .error-details {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+            border-radius: 4px;
+        }
+        
+        .error-details code {
+            color: #dc2626;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="error-icon">⚠️</div>
+        
+        <h1>Oops! Something Went Wrong</h1>
+        
+        <p>We encountered an error while processing your submission.</p>
+        
+        <div class="error-details">
+            <strong>Error Details:</strong><br>
+            <code>{{ error }}</code>
+        </div>
+        
+        <p>Please try again or contact our support team if the problem persists.</p>
+        
+        <a href="javascript:history.back()" class="back-btn">← Go Back</a>
+    </div>
+</body>
+</html>

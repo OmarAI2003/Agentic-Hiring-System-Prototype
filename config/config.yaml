@@ -1,0 +1,209 @@
+# Agentic HR Recruitment System - Configuration File
+# This file stores all system configuration (NO SECRETS!)
+# Secrets go in .env file
+
+# =============================================================================
+# EMAIL CONFIGURATION
+# =============================================================================
+email:
+  # Email provider settings
+  provider: "gmail"  # Options: gmail, outlook, sendgrid
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  
+  # Email addresses (actual credentials in .env)
+  # Set GMAIL_EMAIL and GMAIL_APP_PASSWORD in .env
+  sender_name: "Hiring Team"
+  sender_organization: "Agentic HR Recruitment System"
+  
+  # Test mode
+  test_mode: true
+  test_recipient: "on152052@gmail.com"  # All emails go here in test mode
+  
+  # Email templates
+  templates:
+    initial_outreach: "templates/email_initial.html"
+    confirmation: "templates/email_confirmation.html"
+    interview_invitation: "templates/email_interview.html"
+
+# =============================================================================
+# DATABASE CONFIGURATION
+# =============================================================================
+database:
+  host: "localhost"
+  port: 5432
+  name: "recruitment_db"
+  # Username and password in .env: DB_USER, DB_PASSWORD
+
+# =============================================================================
+# AI/LLM CONFIGURATION
+# =============================================================================
+ai:
+  # Primary LLM provider
+  provider: "groq"  # Options: groq, openai, anthropic
+  model: "llama-3.3-70b-versatile"
+  # API key in .env: GROQ_API_KEY
+  
+  # AI behavior settings
+  temperature: 0.7
+  max_tokens: 2000
+  
+  # AI features
+  features:
+    job_description_generation: true
+    candidate_scoring: true
+    question_generation: true
+    evaluation: true
+
+# =============================================================================
+# RECRUITMENT WORKFLOW CONFIGURATION
+# =============================================================================
+recruitment:
+  # Candidate sourcing
+  sourcing:
+    candidates_per_job: 20
+    use_github: false  # Set to true to search real GitHub profiles
+    use_mock_data: true
+    github_api_rate_limit: 10  # requests per minute
+  
+  # Candidate shortlisting
+  shortlist:
+    top_n: 5
+    minimum_score: 70
+  
+  # Interview configuration
+  interview:
+    questions_per_candidate: 10
+    question_categories:
+      - technical_knowledge
+      - problem_solving
+      - coding
+      - system_design
+      - behavioral
+      - situational
+
+# =============================================================================
+# WEB FORM CONFIGURATION
+# =============================================================================
+web_form:
+  host: "127.0.0.1"
+  port: 5000
+  debug: true
+  
+  # Form sections
+  sections:
+    - personal_information
+    - demographics
+    - work_authorization
+    - availability
+    - documents
+
+# =============================================================================
+# N8N INTEGRATION (ORCHESTRATION)
+# =============================================================================
+n8n:
+  enabled: false  # Set to true when ready to use n8n
+  base_url: "http://localhost:5678"
+  
+  # Webhook endpoints (configure these in n8n)
+  webhooks:
+    job_created: "/webhook/job-created"
+    candidates_sourced: "/webhook/candidates-sourced"
+    email_sent: "/webhook/email-sent"
+    form_submitted: "/webhook/form-submitted"
+    interview_scheduled: "/webhook/interview-scheduled"
+    evaluation_complete: "/webhook/evaluation-complete"
+  
+  # Workflow triggers
+  workflows:
+    candidate_sourcing: "workflow_candidate_sourcing"
+    email_automation: "workflow_email_automation"
+    interview_scheduling: "workflow_interview_scheduling"
+    evaluation: "workflow_evaluation"
+
+# =============================================================================
+# JOB POSTING SOURCES
+# =============================================================================
+job_sources:
+  # Remote job boards
+  remotive:
+    enabled: true
+    api_url: "https://remotive.com/api/remote-jobs"
+    categories: ["software-dev", "devops", "data"]
+  
+  # Manual job input
+  manual:
+    enabled: true
+    input_method: "web_ui"  # Options: web_ui, api, file
+  
+  # AI job generation
+  ai_generation:
+    enabled: true
+    default_company: "TechCorp"
+    default_location: "Remote"
+
+# =============================================================================
+# API CONFIGURATION
+# =============================================================================
+api:
+  enabled: true
+  host: "127.0.0.1"
+  port: 8000
+  
+  # API endpoints
+  endpoints:
+    create_job: "/api/jobs/create"
+    submit_job: "/api/jobs/submit"
+    get_candidates: "/api/candidates"
+    send_emails: "/api/emails/send"
+
+# =============================================================================
+# LOGGING & MONITORING
+# =============================================================================
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  file: "logs/system.log"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  # Log categories
+  categories:
+    sourcing: true
+    scoring: true
+    email: true
+    questions: true
+    evaluation: true
+
+# =============================================================================
+# DATA STORAGE
+# =============================================================================
+storage:
+  data_dir: "data"
+  
+  # Directories
+  directories:
+    jobs: "data/jobs"
+    candidates: "data/candidates"
+    forms: "data/forms"
+    questions: "data/questions"
+    reports: "reports"
+  
+  # File formats
+  formats:
+    job_files: "json"
+    candidate_files: "json"
+    reports: "json"
+
+# =============================================================================
+# SECURITY
+# =============================================================================
+security:
+  # Data encryption
+  encrypt_pii: false  # Set to true in production
+  
+  # API authentication
+  api_key_required: false  # Set to true in production
+  
+  # Rate limiting
+  rate_limit:
+    enabled: false
+    max_requests_per_minute: 60

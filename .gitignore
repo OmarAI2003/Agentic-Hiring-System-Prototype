@@ -205,3 +205,24 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Project Specific
+config/google_credentials.json
+config/token.json
+*.pem
+*.key
+data/candidates/*.json
+data/jobs/*.json
+data/forms/*.json
+data/questions/**/*.json
+data/answers/**/*.json
+reports/
+logs/
+*.db
+*.log
+
+# Obsolete files
+nginx/
+n8n_workflows/
+docker-compose.yml
+Dockerfile.*

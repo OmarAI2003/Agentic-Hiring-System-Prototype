@@ -1,0 +1,64 @@
+{
+  "job_descriptions": [
+    {
+      "title": "Agentic AI Intern",
+      "description": "We offer a competitive salary and benefits package, as well as opportunities for professional growth and development. Our team is diverse and dynamic, and we are committed to fostering a culture of inclusion and respect. We believe in giving our team members the autonomy to take ownership of their work, and to pursue their passions and interests. If you are a motivated and talented individual with a passion for AI and machine learning, we encourage you to apply for this exciting opportunity.",
+      "required_skills": [
+        "Python programming language",
+        "Machine learning frameworks such as TensorFlow or PyTorch",
+        "Deep learning architectures such as CNNs or RNNs",
+        "Natural language processing techniques such as sentiment analysis or text classification",
+        "Computer vision techniques such as object detection or image segmentation",
+        "Data preprocessing and feature engineering",
+        "Model evaluation and hyperparameter tuning",
+        "Cloud-based platforms such as AWS or Azure",
+        "Collaboration tools such as Git or Jupyter Notebook",
+        "Data visualization tools such as Matplotlib or Seaborn"
+      ],
+      "experience_level": "entry",
+      "location": "Remote",
+      "employment_type": "Full-time",
+      "salary_range": "$60,000 - $80,000 per year",
+      "department": "Artificial Intelligence",
+      "responsibilities": [
+        "Collaborating with cross-functional teams to design, develop, and deploy AI-powered solutions",
+        "Conducting research and analysis to identify areas of opportunity for AI-driven innovation",
+        "Developing and refining AI models using machine learning frameworks such as TensorFlow or PyTorch",
+        "Evaluating and refining AI models using techniques such as hyperparameter tuning and model evaluation",
+        "Presenting findings and results to senior leadership and other stakeholders",
+        "Staying up-to-date with the latest developments in the field of AI and machine learning",
+        "Collaborating with other teams, including data science, product, and engineering, to identify areas of opportunity for AI-driven innovation"
+      ],
+      "qualifications": [
+        "Bachelor's degree in Computer Science, Mathematics, or related field",
+        "Strong programming skills in languages such as Python or Java",
+        "Experience with machine learning frameworks such as TensorFlow or PyTorch",
+        "Knowledge of deep learning architectures such as CNNs or RNNs",
+        "Experience with data preprocessing and feature engineering",
+        "Strong analytical and problem-solving skills",
+        "Excellent communication and collaboration skills"
+      ],
+      "nice_to_have": [
+        "Experience with cloud-based platforms such as AWS or Azure",
+        "Knowledge of containerization tools such as Docker",
+        "Experience with agile development methodologies such as Scrum or Kanban",
+        "Knowledge of data visualization tools such as Matplotlib or Seaborn",
+        "Experience with collaboration tools such as Git or Jupyter Notebook"
+      ],
+      "created_at": "C:\\Users\\A\\Agentic-Hiring-System-Prototype",
+      "job_id": 1
+    }
+  ],
+  "email_settings": {
+    "sender_name": "The Holy Company",
+    "company_name": "rbwj tjjg joqz gtkc",
+    "test_mode": true,
+    "test_email": "on152052@gmail.com"
+  },
+  "system_settings": {
+    "candidate_count": 20,
+    "shortlist_count": 5,
+    "use_github": false,
+    "use_ai_weights": true
+  }
+}

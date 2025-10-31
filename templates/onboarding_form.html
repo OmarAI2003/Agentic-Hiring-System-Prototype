@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Onboarding Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .form-content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        label .required {
+            color: #e74c3c;
+            margin-left: 4px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .radio-item,
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input[type="radio"],
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .help-text {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .form-content {
+                padding: 20px;
+            }
+            
+            .radio-group,
+            .checkbox-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Candidate Onboarding Form</h1>
+            <p>Please complete all sections to proceed with your application</p>
+        </div>
+        
+        <form action="/submit" method="POST" class="form-content">
+            <!-- Hidden fields -->
+            <input type="hidden" name="job_id" value="{{ job_id }}">
+            
+            <!-- Section 1: Personal Information -->
+            <div class="section">
+                <h2 class="section-title">📋 Personal Information</h2>
+                
+                <div class="form-group">
+                    <label for="full_name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="full_name" name="full_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" value="{{ candidate_email }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" required>
+                    <div class="help-text">Include country code (e.g., +1-555-123-4567)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Current Location <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" placeholder="City, Country" required>
+                </div>
+            </div>
+            
+            <!-- Section 2: Demographics -->
+            <div class="section">
+                <h2 class="section-title">👤 Demographics</h2>
+                
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" min="18" max="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nationality">Nationality</label>
+                    <input type="text" id="nationality" name="nationality">
+                </div>
+                
+                <div class="form-group">
+                    <label for="marital_status">Marital Status</label>
+                    <select id="marital_status" name="marital_status">
+                        <option value="">Select...</option>
+                        <option value="single">Single</option>
+                        <option value="married">Married</option>
+                        <option value="divorced">Divorced</option>
+                        <option value="widowed">Widowed</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Section 3: Work Authorization -->
+            <div class="section">
+                <h2 class="section-title">🌍 Work Authorization</h2>
+                
+                <div class="form-group">
+                    <label>Do you require visa sponsorship? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="visa_yes" name="visa_required" value="yes" required>
+                            <label for="visa_yes">Yes</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="visa_no" name="visa_required" value="no" required>
+                            <label for="visa_no">No</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="work_authorization">Work Authorization Details</label>
+                    <textarea id="work_authorization" name="work_authorization" 
+                              placeholder="Please provide details about your current work authorization status, visa type, expiry date, etc."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Are you legally authorized to work in the hiring country? <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="authorized_yes" name="legally_authorized" value="yes" required>
+                            <label for="authorized_yes">Yes</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="authorized_no" name="legally_authorized" value="no" required>
+                            <label for="authorized_no">No</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 4: Availability -->
+            <div class="section">
+                <h2 class="section-title">📅 Availability</h2>
+                
+                <div class="form-group">
+                    <label for="start_date">Earliest Start Date <span class="required">*</span></label>
+                    <input type="date" id="start_date" name="start_date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Preferred Interview Times (Select all that apply)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="time_morning" name="interview_time_morning" value="morning">
+                            <label for="time_morning">Morning (9AM-12PM)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="time_afternoon" name="interview_time_afternoon" value="afternoon">
+                            <label for="time_afternoon">Afternoon (12PM-5PM)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="time_evening" name="interview_time_evening" value="evening">
+                            <label for="time_evening">Evening (5PM-8PM)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timezone">Your Timezone <span class="required">*</span></label>
+                    <select id="timezone" name="timezone" required>
+                        <option value="">Select timezone...</option>
+                        <option value="UTC-12:00">UTC-12:00 Baker Island</option>
+                        <option value="UTC-11:00">UTC-11:00 American Samoa</option>
+                        <option value="UTC-10:00">UTC-10:00 Hawaii</option>
+                        <option value="UTC-09:00">UTC-09:00 Alaska</option>
+                        <option value="UTC-08:00">UTC-08:00 Pacific Time (US & Canada)</option>
+                        <option value="UTC-07:00">UTC-07:00 Mountain Time (US & Canada)</option>
+                        <option value="UTC-06:00">UTC-06:00 Central Time (US & Canada)</option>
+                        <option value="UTC-05:00">UTC-05:00 Eastern Time (US & Canada)</option>
+                        <option value="UTC-04:00">UTC-04:00 Atlantic Time (Canada)</option>
+                        <option value="UTC-03:00">UTC-03:00 Buenos Aires, Georgetown</option>
+                        <option value="UTC-02:00">UTC-02:00 Mid-Atlantic</option>
+                        <option value="UTC-01:00">UTC-01:00 Azores</option>
+                        <option value="UTC+00:00">UTC+00:00 London, Dublin</option>
+                        <option value="UTC+01:00">UTC+01:00 Paris, Berlin, Rome</option>
+                        <option value="UTC+02:00">UTC+02:00 Cairo, Athens</option>
+                        <option value="UTC+03:00">UTC+03:00 Moscow, Baghdad</option>
+                        <option value="UTC+04:00">UTC+04:00 Dubai, Abu Dhabi</option>
+                        <option value="UTC+05:00">UTC+05:00 Islamabad, Karachi</option>
+                        <option value="UTC+05:30">UTC+05:30 Mumbai, Delhi</option>
+                        <option value="UTC+06:00">UTC+06:00 Dhaka, Almaty</option>
+                        <option value="UTC+07:00">UTC+07:00 Bangkok, Jakarta</option>
+                        <option value="UTC+08:00">UTC+08:00 Singapore, Beijing</option>
+                        <option value="UTC+09:00">UTC+09:00 Tokyo, Seoul</option>
+                        <option value="UTC+10:00">UTC+10:00 Sydney, Melbourne</option>
+                        <option value="UTC+11:00">UTC+11:00 Solomon Islands</option>
+                        <option value="UTC+12:00">UTC+12:00 Auckland, Wellington</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="availability_notes">Additional Availability Notes</label>
+                    <textarea id="availability_notes" name="availability_notes" 
+                              placeholder="Any specific days/times you're NOT available? Any scheduling preferences?"></textarea>
+                </div>
+            </div>
+            
+            <!-- Section 5: Documents -->
+            <div class="section">
+                <h2 class="section-title">📎 Documents & Links</h2>
+                
+                <div class="form-group">
+                    <label for="resume_url">Resume/CV Link <span class="required">*</span></label>
+                    <input type="url" id="resume_url" name="resume_url" 
+                           placeholder="https://drive.google.com/..." required>
+                    <div class="help-text">Upload to Google Drive/Dropbox and share public link</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="portfolio_url">Portfolio/Website</label>
+                    <input type="url" id="portfolio_url" name="portfolio_url" 
+                           placeholder="https://yourportfolio.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="linkedin_url">LinkedIn Profile</label>
+                    <input type="url" id="linkedin_url" name="linkedin_url" 
+                           placeholder="https://linkedin.com/in/yourprofile">
+                </div>
+                
+                <div class="form-group">
+                    <label for="github_url">GitHub Profile</label>
+                    <input type="url" id="github_url" name="github_url" 
+                           placeholder="https://github.com/yourusername">
+                </div>
+                
+                <div class="form-group">
+                    <label for="additional_info">Additional Information</label>
+                    <textarea id="additional_info" name="additional_info" 
+                              placeholder="Anything else you'd like us to know? Certifications, achievements, special circumstances, etc."></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">✅ Submit Application</button>
+        </form>
+    </div>
+</body>
+</html>

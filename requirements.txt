@@ -1,0 +1,35 @@
+# Core Dependencies
+python-dotenv==1.0.0
+requests==2.31.0
+faker==22.0.0
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.25
+
+# LLM/AI
+groq==0.4.0
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.3
+
+# Email
+yagmail==0.15.293
+
+# Web Scraping (for candidate sourcing)
+beautifulsoup4==4.12.3
+
+# Forms
+jinja2==3.1.3
+
+# API Framework (for webhooks)
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+
+# Utilities
+pyyaml==6.0.1
+schedule==1.2.0
+pytz==2023.3.post1
+

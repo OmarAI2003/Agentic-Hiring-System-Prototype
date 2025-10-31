@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Control Panel - Agentic Recruitment System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .results h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .results li {
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .results .next-steps {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 5px;
+        }
+
+        .results .next-steps h4 {
+            margin-bottom: 10px;
+            color: #1976d2;
+        }
+
+        .results .next-steps ol {
+            list-style-position: inside;
+            color: #555;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .nav-link {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .nav-link:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 HR Control Panel</h1>
+            <p>Complete Automated Recruitment Workflow</p>
+        </div>
+
+        <div class="form-container">
+            <div class="info-box">
+                <h3>📋 What This Does:</h3>
+                <ul>
+                    <li>Sources candidates for your job</li>
+                    <li>Generates MCQ assessment questions</li>
+                    <li>Sends onboarding emails automatically</li>
+                    <li>Candidates complete forms → Auto-sends MCQ emails</li>
+                    <li>Candidates complete MCQs → Auto-sends feedback emails</li>
+                    <li><strong>After all complete MCQs:</strong> Auto-sends interview invitations to top 3 candidates</li>
+                    <li><strong>If ≤3 candidates:</strong> All receive interview invitations immediately</li>
+                </ul>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="recruitmentForm">
+                <!-- Job Title -->
+                <div class="form-group">
+                    <label for="job_title">
+                        Job Title <span class="required">*</span>
+                    </label>
+                    <div style="display: flex; gap: 10px;">
+                        <input 
+                            type="text" 
+                            id="job_title" 
+                            name="job_title" 
+                            placeholder="e.g., Senior Python Developer"
+                            required
+                            style="flex: 1;"
+                        >
+                        <button type="button" class="btn" onclick="generateJobDescription()" style="width: auto; padding: 12px 25px; white-space: nowrap;">
+                            ✨ Generate with AI
+                        </button>
+                    </div>
+                    <div class="helper-text">
+                        Enter a job title and click "Generate with AI" to auto-create the description
+                    </div>
+                </div>
+
+                <!-- Job Description -->
+                <div class="form-group">
+                    <label for="job_description">
+                        Job Description <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        id="job_description" 
+                        name="job_description" 
+                        placeholder="Click 'Generate with AI' above OR paste your job description here...&#10;&#10;Include responsibilities, requirements, and qualifications."
+                    ></textarea>
+                    <div class="helper-text">
+                        Use AI generation or paste manually
+                    </div>
+                </div>
+
+                <!-- Email Configuration -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="sender_email">
+                            Gmail Address <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="sender_email" 
+                            name="sender_email" 
+                            value="omaragiez3@gmail.com"
+                            placeholder="your-email@gmail.com"
+                            required
+                        >
+                        <div class="helper-text">
+                            Gmail account for sending emails
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sender_password">
+                            App Password <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="sender_password" 
+                            name="sender_password" 
+                            value="rbwjtjjgjoqzgtkc"
+                            placeholder="16-char password"
+                            maxlength="16"
+                            required
+                        >
+                        <div class="helper-text">
+                            <a href="https://myaccount.google.com/apppasswords" target="_blank">Get App Password</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number of Candidates + Test Email -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="num_candidates">
+                            Number of Candidates
+                        </label>
+                        <input 
+                            type="number" 
+                            id="num_candidates" 
+                            name="num_candidates" 
+                            value="3" 
+                            min="1" 
+                            max="10"
+                        >
+                        <div class="helper-text">
+                            How many candidates to source (1-10)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test_email">
+                            Test Email Address <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="test_email" 
+                            name="test_email" 
+                            value="on152052@gmail.com"
+                            required
+                        >
+                        <div class="helper-text">
+                            All emails will be sent here for testing
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn" id="submitBtn">
+                    🚀 Start Complete Workflow
+                </button>
+            </form>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p><strong>Starting Workflow...</strong></p>
+                <p>Sourcing candidates, generating MCQs, and sending emails.</p>
+                <p>This may take 30-60 seconds.</p>
+            </div>
+
+            <!-- Results -->
+            <div class="results" id="results">
+                <h3>✅ Workflow Started Successfully!</h3>
+                <ul id="resultsList"></ul>
+                <div class="next-steps">
+                    <h4>📬 Next Steps:</h4>
+                    <ol id="nextStepsList"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('recruitmentForm');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const alert = document.getElementById('alert');
+
+        // AI Job Description Generation
+        async function generateJobDescription() {
+            const jobTitle = document.getElementById('job_title').value.trim();
+            
+            if (!jobTitle) {
+                showAlert('Please enter a job title first', 'error');
+                return;
+            }
+
+            // Show loading in the button
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/generate-job-description', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ job_title: jobTitle })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    document.getElementById('job_description').value = data.job_description;
+                    showAlert('✅ Job description generated successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to generate job description');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('❌ Error generating job description: ' + error.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Form submission
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Hide previous alerts and results
+            alert.style.display = 'none';
+            results.style.display = 'none';
+
+            // Get form data
+            const formData = {
+                job_title: document.getElementById('job_title').value.trim(),
+                job_description: document.getElementById('job_description').value.trim(),
+                sender_email: document.getElementById('sender_email').value.trim(),
+                sender_password: document.getElementById('sender_password').value.trim(),
+                num_candidates: parseInt(document.getElementById('num_candidates').value) || 3,
+                test_email: document.getElementById('test_email').value.trim()
+            };
+
+            // Validation
+            if (!formData.job_title) {
+                showAlert('Please enter a job title', 'error');
+                return;
+            }
+
+            if (!formData.job_description) {
+                showAlert('Please enter a job description or generate one using AI', 'error');
+                return;
+            }
+
+            if (!formData.sender_email) {
+                showAlert('Please enter sender email', 'error');
+                return;
+            }
+
+            if (!formData.sender_password) {
+                showAlert('Please enter Gmail App Password', 'error');
+                return;
+            }
+
+            if (formData.sender_password.length !== 16) {
+                showAlert('Gmail App Password must be exactly 16 characters', 'error');
+                return;
+            }
+
+            if (!formData.test_email) {
+                showAlert('Please enter a test email address', 'error');
+                return;
+            }
+
+            // Show loading
+            form.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                // Send request to backend
+                const response = await fetch('/api/start-workflow', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Show results
+                    displayResults(data.results);
+                    showAlert('Workflow started! Check your email inbox.', 'success');
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error: ' + error.message, 'error');
+                form.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+
+        function showAlert(message, type) {
+            alert.textContent = message;
+            alert.className = 'alert alert-' + type;
+            alert.style.display = 'block';
+            alert.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayResults(data) {
+            const resultsList = document.getElementById('resultsList');
+            const nextStepsList = document.getElementById('nextStepsList');
+            
+            resultsList.innerHTML = '';
+            nextStepsList.innerHTML = '';
+
+            // Display stats
+            const stats = [
+                `📊 Job ID: ${data.job_id}`,
+                `📋 Job Title: ${data.job_title}`,
+                `👥 Candidates Sourced: ${data.candidates_sourced}`,
+                `❓ MCQ Questions Generated: ${data.mcq_questions_generated}`,
+                `📧 Onboarding Emails Sent: ${data.emails_sent}`,
+                data.test_email_used ? `📮 Test Email: ${data.test_email_used}` : ''
+            ];
+
+            stats.filter(item => item).forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                resultsList.appendChild(li);
+            });
+
+            // Display next steps
+            if (data.next_steps && data.next_steps.length > 0) {
+                data.next_steps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.textContent = step;
+                    nextStepsList.appendChild(li);
+                });
+            }
+
+            results.style.display = 'block';
+            results.scrollIntoView({ behavior: 'smooth' });
+
+            // Show form again for next run
+            setTimeout(() => {
+                form.style.display = 'block';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
