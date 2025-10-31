@@ -446,4 +446,6 @@ if __name__ == '__main__':
     print("\nPress Ctrl+C to stop the server")
     print("=" * 80 + "\n")
     
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # Use debug mode only in local development, not in production
+    debug_mode = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
