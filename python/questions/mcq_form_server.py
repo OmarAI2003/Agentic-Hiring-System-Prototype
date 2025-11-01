@@ -41,12 +41,60 @@ def mcq_form():
         job_title_clean = job_title.replace('/', '_').replace('\\', '_').replace('*', '').strip()
         questions_file = QUESTIONS_DIR / job_title_clean / f"job_{job_id}_questions.json"
         
+        # If questions don't exist, generate them on-demand
         if not questions_file.exists():
-            return render_template('form_error.html', 
-                                 error="Questions not found for this position"), 404
-        
-        with open(questions_file, 'r', encoding='utf-8') as f:
-            questions_data = json.load(f)
+            logger.warning(f"Questions file not found: {questions_file}")
+            logger.info("Generating questions on-demand...")
+            
+            try:
+                from python.questions.mcq_generator import MCQGenerator
+                import os
+                
+                # Load job details to generate questions
+                jobs_dir = Path(__file__).parent.parent.parent / 'data' / 'jobs'
+                job_file = jobs_dir / f'job_{job_id}.json'
+                
+                if not job_file.exists():
+                    # Try alternative pattern
+                    job_files = list(jobs_dir.glob(f'*{job_id}*.json'))
+                    if job_files:
+                        job_file = job_files[0]
+                    else:
+                        return render_template('form_error.html', 
+                                             error="Job information not found. Please contact HR."), 404
+                
+                with open(job_file, 'r', encoding='utf-8') as f:
+                    job_data = json.load(f)
+                
+                # Generate questions
+                mcq_generator = MCQGenerator()
+                questions = mcq_generator.generate_mcq_questions(
+                    job_title=job_title,
+                    job_description=job_data.get('description', ''),
+                    required_skills=job_data.get('required_skills', []),
+                    num_questions=5
+                )
+                
+                # Save questions
+                mcq_generator.save_questions(
+                    questions=questions,
+                    job_id=job_id,
+                    job_title=job_title
+                )
+                
+                logger.info(f"Generated {len(questions)} questions on-demand")
+                
+                # Reload the file
+                with open(questions_file, 'r', encoding='utf-8') as f:
+                    questions_data = json.load(f)
+                    
+            except Exception as gen_error:
+                logger.error(f"Failed to generate questions on-demand: {gen_error}")
+                return render_template('form_error.html', 
+                                     error="Unable to load assessment questions. Please try again later."), 500
+        else:
+            with open(questions_file, 'r', encoding='utf-8') as f:
+                questions_data = json.load(f)
         
         return render_template('mcq_form.html',
                              candidate_email=candidate_email,
