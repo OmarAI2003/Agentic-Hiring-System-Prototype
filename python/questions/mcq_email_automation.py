@@ -50,12 +50,6 @@ class MCQEmailSender:
             True if sent successfully
         """
         try:
-            # Create message
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"Technical Assessment - {job_title}"
-            msg['From'] = self.sender_email
-            msg['To'] = candidate_email
-            
             # HTML email body
             html = f"""
             <!DOCTYPE html>
@@ -208,12 +202,6 @@ class MCQEmailSender:
             True if sent successfully
         """
         try:
-            # Create message
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"Interview Invitation - {job_title}"
-            msg['From'] = self.sender_email
-            msg['To'] = candidate_email
-            
             # HTML email body
             html = f"""
             <!DOCTYPE html>
@@ -395,16 +383,6 @@ def send_feedback_email(
         True if sent successfully
     """
     try:
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-        
-        # Create message
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = f"Your Assessment Results - {job_title}"
-        msg['From'] = email_sender.sender_email
-        msg['To'] = candidate_email
-        
         # Build summary only (no detailed question breakdown)
         results_html = f"""
         <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
@@ -511,19 +489,25 @@ def send_feedback_email(
         </html>
         """
         
-        # Attach HTML content
-        msg.attach(MIMEText(html, 'html'))
+        # Send email using SendGrid
+        message = Mail(
+            from_email=email_sender.sender_email,
+            to_emails=candidate_email,
+            subject=f"Your Assessment Results - {job_title}",
+            html_content=html
+        )
         
-        # Send email
-        with smtplib.SMTP(email_sender.smtp_server, email_sender.smtp_port) as server:
-            server.starttls()
-            server.login(email_sender.sender_email, email_sender.app_password)
-            server.send_message(msg)
+        response = email_sender.sg_client.send(message)
         
-        return True
+        if response.status_code in [200, 201, 202]:
+            logger.info(f"Feedback email sent to: {candidate_email} (Score: {score:.1f}%)")
+            return True
+        else:
+            logger.error(f"SendGrid returned status {response.status_code}")
+            return False
         
     except Exception as e:
-        print(f"Error sending feedback email: {e}")
+        logger.error(f"Failed to send feedback email to {candidate_email}: {e}")
         return False
 
 
