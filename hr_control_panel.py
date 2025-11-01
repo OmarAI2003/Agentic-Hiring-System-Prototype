@@ -282,14 +282,16 @@ def start_workflow():
                     logger.info(f"Using test email: {test_email}")
                 
                 job_dict = {
-                    'id': job_id,
-                    'title': job_title
+                    'job_id': job_id,
+                    'title': job_title,
+                    'description': job_description
                 }
                 
+                # Let email_automation generate the form URL with all parameters
                 success = email_automation.send_onboarding_email(
                     candidate=candidate_copy,
                     job=job_dict,
-                    form_url=f"{ONBOARDING_FORM_URL}?candidate_email={candidate_copy['email']}&job_id={job_id}"
+                    form_url=None  # Let it auto-generate with job_title and job_description
                 )
                 
                 if success:
