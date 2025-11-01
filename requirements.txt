@@ -15,7 +15,7 @@ pandas==2.1.4
 numpy==1.26.3
 
 # Email
-yagmail==0.15.293
+sendgrid==6.11.0
 
 # Web Scraping (for candidate sourcing)
 beautifulsoup4==4.12.3

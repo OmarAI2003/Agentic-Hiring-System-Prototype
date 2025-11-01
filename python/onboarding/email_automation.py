@@ -1,15 +1,14 @@
 """
 Phase 2: Email Automation for Candidate Onboarding
-Sends personalized emails to shortlisted candidates using Gmail SMTP
+Sends personalized emails to shortlisted candidates using SendGrid API
 """
-import smtplib
 import os
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from typing import Dict, List
 from python.utils.helpers import get_logger, log_action
 from python.onboarding.form_manager import GoogleFormManager
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 logger = get_logger(__name__)
 
@@ -17,7 +16,7 @@ logger = get_logger(__name__)
 class EmailAutomation:
     """
     Handles automated email sending for candidate onboarding
-    Uses Gmail SMTP (free)
+    Uses SendGrid API (free, works on Render)
     """
     
     def __init__(self, test_mode: bool = True, test_email: str = "on152052@gmail.com"):
@@ -34,20 +33,17 @@ class EmailAutomation:
         # Initialize form manager
         self.form_manager = GoogleFormManager()
         
-        # Gmail SMTP settings
-        self.smtp_server = "smtp.gmail.com"
-        self.smtp_port = 587
+        # Get SendGrid credentials from environment
+        self.sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+        self.sender_email = os.getenv('SENDER_EMAIL', 'noreply@recruitment.com')
         
-        # Get credentials from environment
-        self.sender_email = os.getenv('GMAIL_EMAIL')
-        self.sender_password = os.getenv('GMAIL_APP_PASSWORD')
-        
-        if not self.sender_email or not self.sender_password:
-            logger.warning("Gmail credentials not found in environment. Email sending will be disabled.")
-            logger.warning("Set GMAIL_EMAIL and GMAIL_APP_PASSWORD in .env file")
+        if not self.sendgrid_api_key:
+            logger.warning("SendGrid API key not found in environment. Email sending will be disabled.")
+            logger.warning("Set SENDGRID_API_KEY in .env file")
             self.enabled = False
         else:
             self.enabled = True
+            self.sg_client = SendGridAPIClient(self.sendgrid_api_key)
             logger.info(f"Email automation initialized (Test mode: {test_mode})")
     
     def send_onboarding_email(self, candidate: Dict, job: Dict, form_url: str = None) -> bool:
@@ -90,32 +86,30 @@ class EmailAutomation:
             subject = f"Congratulations! You've been shortlisted for {job['title']}"
             html_content = self._generate_email_html(candidate, job, form_url)
             
-            # Create email message
-            message = MIMEMultipart("alternative")
-            message["Subject"] = subject
-            message["From"] = self.sender_email
-            message["To"] = recipient_email
-            
-            # Attach HTML content
-            html_part = MIMEText(html_content, "html")
-            message.attach(html_part)
-            
-            # Send email
+            # Send email using SendGrid
             logger.info(f"Sending email to {recipient_name} ({recipient_email})...")
             
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.sender_email, self.sender_password)
-                server.send_message(message)
+            message = Mail(
+                from_email=self.sender_email,
+                to_emails=recipient_email,
+                subject=subject,
+                html_content=html_content
+            )
             
-            logger.info(f"✓ Email sent successfully to {recipient_name}")
+            response = self.sg_client.send(message)
             
-            # Log action
-            log_action('candidate_onboarding',
-                      f"Sent onboarding email to {candidate['full_name']}",
-                      {'recipient': recipient_email, 'job': job['title'], 'test_mode': self.test_mode})
-            
-            return True
+            if response.status_code in [200, 201, 202]:
+                logger.info(f"✓ Email sent successfully to {recipient_name}")
+                
+                # Log action
+                log_action('candidate_onboarding',
+                          f"Sent onboarding email to {candidate['full_name']}",
+                          {'recipient': recipient_email, 'job': job['title'], 'test_mode': self.test_mode})
+                
+                return True
+            else:
+                logger.error(f"SendGrid returned status {response.status_code}")
+                return False
             
         except Exception as e:
             logger.error(f"Failed to send email to {recipient_name}: {str(e)}")

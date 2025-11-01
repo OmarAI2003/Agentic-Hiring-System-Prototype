@@ -4,32 +4,29 @@ Sends MCQ assessment emails to candidates who completed onboarding
 """
 import os
 import json
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 from python.utils.helpers import get_logger
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 logger = get_logger(__name__)
 
 
 class MCQEmailSender:
-    """Send MCQ assessment emails via Gmail"""
+    """Send MCQ assessment emails via SendGrid"""
     
-    def __init__(self, sender_email: str, app_password: str):
+    def __init__(self, api_key: str, sender_email: str):
         """
         Initialize email sender
         
         Args:
-            sender_email: Gmail address
-            app_password: Gmail App Password
+            api_key: SendGrid API key
+            sender_email: Sender email address
         """
+        self.sg_client = SendGridAPIClient(api_key)
         self.sender_email = sender_email
-        self.app_password = app_password
-        self.smtp_server = "smtp.gmail.com"
-        self.smtp_port = 587
     
     def send_mcq_email(
         self,
@@ -168,17 +165,22 @@ class MCQEmailSender:
             </html>
             """
             
-            # Attach HTML content
-            msg.attach(MIMEText(html, 'html'))
+            # Send email using SendGrid
+            message = Mail(
+                from_email=self.sender_email,
+                to_emails=candidate_email,
+                subject=f"Technical Assessment - {job_title}",
+                html_content=html
+            )
             
-            # Send email
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.sender_email, self.app_password)
-                server.send_message(msg)
+            response = self.sg_client.send(message)
             
-            logger.info(f"MCQ email sent to: {candidate_email}")
-            return True
+            if response.status_code in [200, 201, 202]:
+                logger.info(f"MCQ email sent to: {candidate_email}")
+                return True
+            else:
+                logger.error(f"SendGrid returned status {response.status_code}")
+                return False
             
         except Exception as e:
             logger.error(f"Failed to send MCQ email to {candidate_email}: {e}")
@@ -327,17 +329,22 @@ class MCQEmailSender:
             </html>
             """
             
-            # Attach HTML content
-            msg.attach(MIMEText(html, 'html'))
+            # Send email using SendGrid
+            message = Mail(
+                from_email=self.sender_email,
+                to_emails=candidate_email,
+                subject=f"Interview Invitation - {job_title}",
+                html_content=html
+            )
             
-            # Send email
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.sender_email, self.app_password)
-                server.send_message(msg)
+            response = self.sg_client.send(message)
             
-            logger.info(f"Interview invitation sent to: {candidate_email} (Rank #{rank}, Score: {score:.1f}%)")
-            return True
+            if response.status_code in [200, 201, 202]:
+                logger.info(f"Interview invitation sent to: {candidate_email} (Rank #{rank}, Score: {score:.1f}%)")
+                return True
+            else:
+                logger.error(f"SendGrid returned status {response.status_code}")
+                return False
             
         except Exception as e:
             logger.error(f"Failed to send interview invitation to {candidate_email}: {e}")
@@ -526,8 +533,8 @@ if __name__ == "__main__":
     load_dotenv()
     
     sender = MCQEmailSender(
-        sender_email=os.getenv('GMAIL_EMAIL'),
-        app_password=os.getenv('GMAIL_APP_PASSWORD')
+        api_key=os.getenv('SENDGRID_API_KEY'),
+        sender_email=os.getenv('SENDER_EMAIL', 'noreply@recruitment.com')
     )
     
     # Test MCQ email

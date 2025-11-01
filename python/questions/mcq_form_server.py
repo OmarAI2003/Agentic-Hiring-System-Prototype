@@ -143,8 +143,8 @@ def submit_mcq():
             load_dotenv()
             
             email_sender = MCQEmailSender(
-                sender_email=os.getenv('GMAIL_EMAIL'),
-                app_password=os.getenv('GMAIL_APP_PASSWORD')
+                api_key=os.getenv('SENDGRID_API_KEY'),
+                sender_email=os.getenv('SENDER_EMAIL', 'noreply@recruitment.com')
             )
             
             # Send feedback email with results
