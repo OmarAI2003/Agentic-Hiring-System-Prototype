@@ -56,8 +56,8 @@ class GoogleFormManager:
         if job_title:
             params.append(f"job_title={quote(job_title)}")
         if job_description:
-            # Truncate description if too long for URL
-            desc_truncated = job_description[:500] if len(job_description) > 500 else job_description
+            # Truncate description to 200 chars for URL safety
+            desc_truncated = job_description[:200] if len(job_description) > 200 else job_description
             params.append(f"job_description={quote(desc_truncated)}")
         
         if params:

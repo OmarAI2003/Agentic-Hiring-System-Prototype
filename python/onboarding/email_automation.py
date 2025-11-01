@@ -70,6 +70,8 @@ class EmailAutomation:
                 job_title=job.get('title', ''),
                 job_description=job.get('description', '')
             )
+            logger.info(f"Generated form URL (length: {len(form_url)}): {form_url[:200]}...")
+        
         # Determine recipient
         if self.test_mode:
             recipient_email = self.test_email

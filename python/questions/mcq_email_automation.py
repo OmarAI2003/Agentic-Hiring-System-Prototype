@@ -359,8 +359,8 @@ def get_mcq_form_url(candidate_email: str, job_id: int, job_title: str, job_desc
     url = f"{base_url}?candidate_email={candidate_email}&job_id={job_id}&job_title={quote(job_title)}"
     
     if job_description:
-        # Truncate if too long for URL
-        desc_truncated = job_description[:500] if len(job_description) > 500 else job_description
+        # Truncate to 200 chars for URL safety
+        desc_truncated = job_description[:200] if len(job_description) > 200 else job_description
         url += f"&job_description={quote(desc_truncated)}"
     
     return url
