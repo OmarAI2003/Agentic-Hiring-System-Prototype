@@ -32,31 +32,9 @@ Once HR creates a job, the system handles:
 
 ## 🏗️ Architecture
 
-The system consists of 3 microservices deployed on Render:
+![System Architecture](arch.png)
 
-```mermaid
-graph LR
-    A[HR Manager] -->|Creates Job| B[HR Panel]
-    B -->|Sends Email| C[Candidate]
-    C -->|Fills Form| D[Onboarding Service]
-    D -->|Sends MCQ Email| C
-    C -->|Takes Test| E[MCQ Service]
-    E -->|Sends Results| C
-    
-    B -.->|AI| F[Groq API]
-    D -.->|AI| F
-    E -.->|AI| F
-    
-    B -.->|Email| G[SendGrid]
-    D -.->|Email| G
-    E -.->|Email| G
-    
-    style B fill:#fff4e6
-    style D fill:#e8f5e9
-    style E fill:#f3e5f5
-    style F fill:#ffebee
-    style G fill:#ffebee
-```
+The system consists of 3 microservices deployed on Render, with AI-powered decision making at key stages.
 
 ### Services
 
@@ -66,7 +44,7 @@ graph LR
 | **Onboarding Form** | `https://agentic-hiring-onboarding.onrender.com` | Candidate information collection |
 | **MCQ Assessment** | `https://agentic-hiring-mcq.onrender.com` | Technical assessment delivery |
 
-**[📖 Detailed Architecture →](docs/ARCHITECTURE.md)**
+**[📖 Detailed Architecture →](ARCHITECTURE.md)**
 
 ## 🚀 Quick Start
 
@@ -118,27 +96,9 @@ python start_mcq_server.py
 
 ## 📊 Complete Workflow
 
-```mermaid
-sequenceDiagram
-    participant HR
-    participant Panel as HR Panel
-    participant Email as SendGrid
-    participant Cand as Candidate
-    participant Onboard as Onboarding
-    participant MCQ as MCQ Service
+![System Architecture](arch.png)
 
-    HR->>Panel: 1. Create Job
-    Panel->>Email: Send onboarding email
-    Email->>Cand: Email with form link
-    
-    Cand->>Onboard: 2. Fill form
-    Onboard->>Email: Send MCQ email
-    Email->>Cand: Email with test link
-    
-    Cand->>MCQ: 3. Take test (10 questions)
-    MCQ->>Email: Send results
-    Email->>Cand: Feedback email with score
-```
+**Flow:** HR creates job → System sources candidates → Email onboarding → Form submission → MCQ generation → Assessment → AI scoring → Results email → AI recommendation
 
 ## 🛠️ Technology Stack
 
@@ -246,7 +206,5 @@ MIT License - see [LICENSE](LICENSE) file for details
 - **Documentation**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 ---
-
-**Built with ❤️ by [Omar AI](https://github.com/OmarAI2003)**
 
 **Status**: ✅ Production Ready | **Version**: 1.0.0 | **Last Updated**: November 2025
