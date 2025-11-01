@@ -41,7 +41,7 @@ database:
 ai:
   # Primary LLM provider
   provider: "groq"  # Options: groq, openai, anthropic
-  model: "llama-3.3-70b-versatile"
+  model: "llama-3.1-8b-instant"  # Faster, uses fewer tokens
   # API key in .env: GROQ_API_KEY
   
   # AI behavior settings

@@ -20,7 +20,7 @@ class MCQGenerator:
         if not api_key:
             raise ValueError("GROQ_API_KEY not found in environment variables")
         self.client = Groq(api_key=api_key)
-        self.model = "llama-3.3-70b-versatile"
+        self.model = "llama-3.1-8b-instant"  # Faster, uses fewer tokens
     
     def generate_mcq_questions(
         self, 

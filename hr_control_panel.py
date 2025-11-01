@@ -118,7 +118,7 @@ Make it professional and detailed. Format it as a clear, structured job posting.
         logger.info(f"Generating job description for: {job_title}")
         
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",  # Faster, uses fewer tokens
             messages=[
                 {"role": "system", "content": "You are an expert HR professional and technical recruiter."},
                 {"role": "user", "content": prompt}

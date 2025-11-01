@@ -18,13 +18,13 @@ class GroqLLM:
     Models available: llama3-8b, llama3-70b, mixtral-8x7b
     """
     
-    def __init__(self, api_key: str = None, model: str = "llama-3.3-70b-versatile"):
+    def __init__(self, api_key: str = None, model: str = "llama-3.1-8b-instant"):
         """
         Initialize Groq client
         
         Args:
             api_key: Groq API key (get free from https://console.groq.com/keys)
-            model: Model to use (llama-3.3-70b-versatile is fast and free)
+            model: Model to use (llama-3.1-8b-instant is fast and uses fewer tokens)
         """
         self.api_key = api_key or os.getenv('GROQ_API_KEY')
         if not self.api_key:
