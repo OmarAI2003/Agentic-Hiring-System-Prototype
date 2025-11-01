@@ -339,7 +339,7 @@ class MCQEmailSender:
             return False
 
 
-def get_mcq_form_url(candidate_email: str, job_id: int, job_title: str) -> str:
+def get_mcq_form_url(candidate_email: str, job_id: int, job_title: str, job_description: str = "") -> str:
     """
     Generate MCQ form URL with parameters
     
@@ -347,13 +347,23 @@ def get_mcq_form_url(candidate_email: str, job_id: int, job_title: str) -> str:
         candidate_email: Candidate's email
         job_id: Job ID
         job_title: Job title
+        job_description: Job description for MCQ generation
         
     Returns:
         MCQ form URL
     """
     import os
+    from urllib.parse import quote
+    
     base_url = os.getenv('MCQ_FORM_URL', 'http://localhost:5001/mcq')
-    return f"{base_url}?candidate_email={candidate_email}&job_id={job_id}&job_title={job_title}"
+    url = f"{base_url}?candidate_email={candidate_email}&job_id={job_id}&job_title={quote(job_title)}"
+    
+    if job_description:
+        # Truncate if too long for URL
+        desc_truncated = job_description[:500] if len(job_description) > 500 else job_description
+        url += f"&job_description={quote(desc_truncated)}"
+    
+    return url
 
 
 def send_feedback_email(

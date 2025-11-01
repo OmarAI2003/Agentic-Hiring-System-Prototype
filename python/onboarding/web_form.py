@@ -34,18 +34,22 @@ def index():
 def onboarding_form():
     """
     Onboarding form page
-    Query params: candidate_email, job_id, job_title
+    Query params: candidate_email, job_id, job_title, job_description
     """
+    from urllib.parse import unquote
+    
     candidate_email = request.args.get('candidate_email', '')
     job_id = request.args.get('job_id', '')
-    job_title = request.args.get('job_title', '')
+    job_title = unquote(request.args.get('job_title', ''))
+    job_description = unquote(request.args.get('job_description', ''))
     
-    logger.info(f"Onboarding form accessed for: {candidate_email}, job: {job_id}, title: {job_title}")
+    logger.info(f"Onboarding form accessed - Email: {candidate_email}, Job ID: {job_id}, Job Title: {job_title}")
     
     return render_template('onboarding_form.html', 
                          candidate_email=candidate_email,
                          job_id=job_id,
-                         job_title=job_title)
+                         job_title=job_title,
+                         job_description=job_description)
 
 
 @app.route('/submit', methods=['POST'])
@@ -90,29 +94,17 @@ def submit_form():
             
             # Load job details to get job title and description
             job_id = form_data.get('job_id')
-            job_title = form_data.get('job_title', 'Position')  # Get from form or use default
-            jobs_dir = Path(__file__).parent.parent.parent / 'data' / 'jobs'
-            job_description = ""
-            required_skills = []
+            job_title = form_data.get('job_title', 'Position')
+            job_description = form_data.get('job_description', '')  # Get from form
             
-            # Try to load job details from file if exists
-            for file in jobs_dir.glob("job_*.json"):
-                with open(file, 'r', encoding='utf-8') as f:
-                    job = json.load(f)
-                    if str(job.get('job_id')) == str(job_id):
-                        job_title = job.get('title', '').replace('*', '').strip() or job_title
-                        job_description = job.get('description', '')
-                        required_skills = job.get('required_skills', [])
-                        break
+            logger.info(f"Processing MCQ - Title: {job_title}, Description length: {len(job_description)}")
             
-            logger.info(f"Processing MCQ for job_title: {job_title}, job_id: {job_id}")
-            
-            # Generate MCQ questions first
+            # Generate MCQ questions using actual job description
             mcq_generator = MCQGenerator()
             questions = mcq_generator.generate_mcq_questions(
                 job_title=job_title,
-                job_description=job_description,
-                required_skills=required_skills,
+                job_description=job_description if job_description else f"Technical position for {job_title}",
+                required_skills=[],
                 num_questions=5
             )
             
@@ -134,7 +126,8 @@ def submit_form():
             mcq_url = get_mcq_form_url(
                 candidate_email=submission['candidate_email'],
                 job_id=job_id,
-                job_title=job_title
+                job_title=job_title,
+                job_description=job_description
             )
             
             email_sender.send_mcq_email(

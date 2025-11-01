@@ -295,6 +295,7 @@
                 <input type="hidden" id="candidate_email" value="{{ candidate_email }}">
                 <input type="hidden" id="job_id" value="{{ job_id }}">
                 <input type="hidden" id="job_title" value="{{ job_title }}">
+                <input type="hidden" id="job_description" value="{{ job_description }}">
                 
                 {% for question in questions %}
                 {% set question_num = loop.index %}
@@ -387,6 +388,7 @@
                         candidate_email: document.getElementById('candidate_email').value,
                         job_id: document.getElementById('job_id').value,
                         job_title: document.getElementById('job_title').value,
+                        job_description: document.getElementById('job_description').value,
                         answers: answers
                     })
                 });

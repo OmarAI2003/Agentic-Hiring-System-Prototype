@@ -32,7 +32,7 @@ class GoogleFormManager:
         
         logger.info("Google Form Manager initialized")
     
-    def get_onboarding_form_url(self, candidate_email: str = None, job_id: int = None, job_title: str = None) -> str:
+    def get_onboarding_form_url(self, candidate_email: str = None, job_id: int = None, job_title: str = None, job_description: str = None) -> str:
         """
         Get the onboarding form URL with pre-filled parameters
         
@@ -40,10 +40,13 @@ class GoogleFormManager:
             candidate_email: Optional candidate email for pre-filling
             job_id: Optional job ID for tracking
             job_title: Optional job title for context
+            job_description: Optional job description for MCQ generation
             
         Returns:
             Form URL with query parameters
         """
+        from urllib.parse import quote
+        
         # Build URL with query parameters
         params = []
         if candidate_email:
@@ -51,7 +54,11 @@ class GoogleFormManager:
         if job_id:
             params.append(f"job_id={job_id}")
         if job_title:
-            params.append(f"job_title={job_title}")
+            params.append(f"job_title={quote(job_title)}")
+        if job_description:
+            # Truncate description if too long for URL
+            desc_truncated = job_description[:500] if len(job_description) > 500 else job_description
+            params.append(f"job_description={quote(desc_truncated)}")
         
         if params:
             form_url = f"{self.base_form_url}?{'&'.join(params)}"

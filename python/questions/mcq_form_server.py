@@ -27,23 +27,27 @@ ANSWERS_DIR.mkdir(parents=True, exist_ok=True)
 @app.route('/mcq')
 def mcq_form():
     """
-    MCQ form page - generates 10 questions on-the-fly based on job title
-    Query params: candidate_email, job_id, job_title
+    MCQ form page - generates 10 questions on-the-fly based on job description
+    Query params: candidate_email, job_id, job_title, job_description
     """
+    from urllib.parse import unquote
+    
     candidate_email = request.args.get('candidate_email', '')
     job_id = request.args.get('job_id', '')
-    job_title = request.args.get('job_title', 'Software Developer')
+    job_title = unquote(request.args.get('job_title', 'Software Developer'))
+    job_description = unquote(request.args.get('job_description', ''))
     
     logger.info(f"MCQ accessed - Email: {candidate_email}, Job: {job_title}")
+    logger.info(f"Job description length: {len(job_description)}")
     
     try:
-        # Generate 10 questions using AI based on job title
+        # Generate 10 questions using AI based on ACTUAL job description
         from python.questions.mcq_generator import MCQGenerator
         
         mcq_generator = MCQGenerator()
         questions = mcq_generator.generate_mcq_questions(
             job_title=job_title,
-            job_description=f"Technical assessment for {job_title}",
+            job_description=job_description if job_description else f"Technical assessment for {job_title}",
             required_skills=[],
             num_questions=10
         )
@@ -54,6 +58,7 @@ def mcq_form():
                              candidate_email=candidate_email,
                              job_id=job_id,
                              job_title=job_title,
+                             job_description=job_description,
                              questions=questions)
         
     except Exception as e:
@@ -64,24 +69,26 @@ def mcq_form():
 @app.route('/submit_mcq', methods=['POST'])
 def submit_mcq():
     """
-    Handle MCQ submission - regenerate questions to check answers
+    Handle MCQ submission - regenerate questions with ACTUAL job description
     """
     try:
         data = request.get_json()
         candidate_email = data.get('candidate_email')
         job_id = data.get('job_id')
         job_title = data.get('job_title', 'Software Developer')
+        job_description = data.get('job_description', '')
         answers = data.get('answers', {})
         
         logger.info(f"MCQ submission from: {candidate_email}")
+        logger.info(f"Using job description length: {len(job_description)}")
         
-        # Regenerate questions to check answers
+        # Regenerate questions with ACTUAL job description to check answers
         from python.questions.mcq_generator import MCQGenerator
         
         mcq_generator = MCQGenerator()
         questions = mcq_generator.generate_mcq_questions(
             job_title=job_title,
-            job_description=f"Technical assessment for {job_title}",
+            job_description=job_description if job_description else f"Technical assessment for {job_title}",
             required_skills=[],
             num_questions=10
         )
