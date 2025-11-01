@@ -8,7 +8,7 @@ psycopg2-binary==2.9.9
 sqlalchemy==2.0.25
 
 # LLM/AI
-groq==0.11.0
+groq==0.33.0
 
 # Data Processing
 pandas==2.1.4
