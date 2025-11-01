@@ -4,6 +4,7 @@ Generates 10 questions on-the-fly based on job title only
 """
 
 from flask import Flask, render_template, request, jsonify
+from urllib.parse import unquote
 from datetime import datetime
 import json
 import logging
@@ -18,6 +19,10 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__, 
             template_folder='../../templates',
             static_folder='../../static')
+
+# Initialize MCQ generator
+from python.questions.mcq_generator import MCQGenerator
+mcq_generator = MCQGenerator()
 
 # Data directory for answers only
 ANSWERS_DIR = Path(__file__).parent.parent.parent / 'data' / 'answers'
@@ -54,6 +59,7 @@ def mcq_form():
         questions = mcq_generator.generate_mcq_questions(
             job_title=job_title,
             job_description=job_description,
+            required_skills=[],  # Will be extracted from job description by AI
             num_questions=10
         )
         
