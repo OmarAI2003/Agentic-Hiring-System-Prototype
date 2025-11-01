@@ -8,16 +8,16 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false
-      - key: GMAIL_EMAIL
+      - key: SENDGRID_API_KEY
         sync: false
-      - key: GMAIL_APP_PASSWORD
+      - key: SENDER_EMAIL
         sync: false
       - key: ONBOARDING_FORM_URL
         value: https://agentic-hiring-onboarding.onrender.com/onboarding
       - key: MCQ_FORM_URL
         value: https://agentic-hiring-mcq.onrender.com/mcq
       - key: PORT
-        value: 3000
+        value: 10000
 
   # Onboarding Form Server
   - type: web
@@ -26,8 +26,16 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python start_form_server.py
     envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDER_EMAIL
+        sync: false
+      - key: MCQ_FORM_URL
+        value: https://agentic-hiring-mcq.onrender.com/mcq
       - key: PORT
-        value: 5000
+        value: 10000
 
   # MCQ Assessment Server
   - type: web
@@ -38,9 +46,9 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false
-      - key: GMAIL_EMAIL
+      - key: SENDGRID_API_KEY
         sync: false
-      - key: GMAIL_APP_PASSWORD
+      - key: SENDER_EMAIL
         sync: false
       - key: PORT
-        value: 5001
+        value: 10000

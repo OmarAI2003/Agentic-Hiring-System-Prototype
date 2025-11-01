@@ -27,8 +27,8 @@ class GoogleFormManager:
         self.storage_path = storage_path
         os.makedirs(storage_path, exist_ok=True)
         
-        # Use local Flask form instead of Google Forms (completely FREE)
-        self.base_form_url = "http://127.0.0.1:5000/onboarding"
+        # Get onboarding form URL from environment variable (for Render deployment)
+        self.base_form_url = os.getenv('ONBOARDING_FORM_URL', 'http://127.0.0.1:5000/onboarding')
         
         logger.info("Google Form Manager initialized")
     
