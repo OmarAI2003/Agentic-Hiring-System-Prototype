@@ -55,10 +55,8 @@ class GoogleFormManager:
             params.append(f"job_id={job_id}")
         if job_title:
             params.append(f"job_title={quote(job_title)}")
-        if job_description:
-            # Truncate description to 200 chars for URL safety
-            desc_truncated = job_description[:200] if len(job_description) > 200 else job_description
-            params.append(f"job_description={quote(desc_truncated)}")
+        # Note: job_description is NOT passed via URL
+        # It will be loaded from the job file (data/jobs/job_{job_id}.json) when needed
         
         if params:
             form_url = f"{self.base_form_url}?{'&'.join(params)}"

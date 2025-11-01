@@ -358,10 +358,8 @@ def get_mcq_form_url(candidate_email: str, job_id: int, job_title: str, job_desc
     base_url = os.getenv('MCQ_FORM_URL', 'http://localhost:5001/mcq')
     url = f"{base_url}?candidate_email={candidate_email}&job_id={job_id}&job_title={quote(job_title)}"
     
-    if job_description:
-        # Truncate to 200 chars for URL safety
-        desc_truncated = job_description[:200] if len(job_description) > 200 else job_description
-        url += f"&job_description={quote(desc_truncated)}"
+    # Note: job_description is NOT passed via URL
+    # The MCQ service will load it from the job file (data/jobs/job_{job_id}.json)
     
     return url
 

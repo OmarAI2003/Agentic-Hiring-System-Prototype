@@ -34,14 +34,30 @@ def index():
 def onboarding_form():
     """
     Onboarding form page
-    Query params: candidate_email, job_id, job_title, job_description
+    Query params: candidate_email, job_id, job_title
+    Job description is loaded from the job file, not from URL
     """
     from urllib.parse import unquote
+    import json
+    import os
     
     candidate_email = request.args.get('candidate_email', '')
     job_id = request.args.get('job_id', '')
     job_title = unquote(request.args.get('job_title', ''))
-    job_description = unquote(request.args.get('job_description', ''))
+    
+    # Load job description from job file (not from URL)
+    job_description = ""
+    try:
+        job_file = f"data/jobs/job_{job_id}.json"
+        if os.path.exists(job_file):
+            with open(job_file, 'r') as f:
+                job_data = json.load(f)
+                job_description = job_data.get('description', '')
+                logger.info(f"Loaded job description from {job_file}")
+        else:
+            logger.warning(f"Job file not found: {job_file}")
+    except Exception as e:
+        logger.error(f"Error loading job file: {str(e)}")
     
     logger.info(f"Onboarding form accessed - Email: {candidate_email}, Job ID: {job_id}, Job Title: {job_title}")
     

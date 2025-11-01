@@ -24,35 +24,38 @@ ANSWERS_DIR = Path(__file__).parent.parent.parent / 'data' / 'answers'
 ANSWERS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-@app.route('/mcq')
+@app.route('/mcq', methods=['GET'])
 def mcq_form():
-    """
-    MCQ form page - generates 10 questions on-the-fly based on job description
-    Query params: candidate_email, job_id, job_title, job_description
-    """
-    from urllib.parse import unquote
-    
-    candidate_email = request.args.get('candidate_email', '')
-    job_id = request.args.get('job_id', '')
-    job_title = unquote(request.args.get('job_title', 'Software Developer'))
-    job_description = unquote(request.args.get('job_description', ''))
-    
-    logger.info(f"MCQ accessed - Email: {candidate_email}, Job: {job_title}")
-    logger.info(f"Job description length: {len(job_description)}")
-    
+    """Display MCQ form - generates questions on-the-fly using job file"""
     try:
-        # Generate 10 questions using AI based on ACTUAL job description
-        from python.questions.mcq_generator import MCQGenerator
+        candidate_email = request.args.get('candidate_email')
+        job_id = request.args.get('job_id')
+        job_title = unquote(request.args.get('job_title', ''))
         
-        mcq_generator = MCQGenerator()
+        if not candidate_email or not job_id:
+            return render_template('form_error.html', 
+                                 error="Missing required parameters"), 400
+        
+        # Load job description from job file (not from URL)
+        job_description = ""
+        try:
+            job_file = f"data/jobs/job_{job_id}.json"
+            if os.path.exists(job_file):
+                with open(job_file, 'r') as f:
+                    job_data = json.load(f)
+                    job_description = job_data.get('description', '')
+                    logger.info(f"Loaded job description from {job_file}")
+            else:
+                logger.warning(f"Job file not found: {job_file}")
+        except Exception as e:
+            logger.error(f"Error loading job file: {str(e)}")
+        
+        # Generate 10 MCQ questions on-the-fly using the FULL job description
         questions = mcq_generator.generate_mcq_questions(
             job_title=job_title,
-            job_description=job_description if job_description else f"Technical assessment for {job_title}",
-            required_skills=[],
+            job_description=job_description,
             num_questions=10
         )
-        
-        logger.info(f"Generated {len(questions)} questions for {job_title}")
         
         return render_template('mcq_form.html',
                              candidate_email=candidate_email,
@@ -60,10 +63,11 @@ def mcq_form():
                              job_title=job_title,
                              job_description=job_description,
                              questions=questions)
-        
+                             
     except Exception as e:
-        logger.error(f"Error generating questions: {e}")
-        return render_template('form_error.html', error=str(e)), 500
+        logger.error(f"Error displaying MCQ form: {str(e)}")
+        return render_template('form_error.html', 
+                             error="Failed to load assessment"), 500
 
 
 @app.route('/submit_mcq', methods=['POST'])
