@@ -66,7 +66,8 @@ class EmailAutomation:
         if not form_url:
             form_url = self.form_manager.get_onboarding_form_url(
                 candidate_email=candidate.get('email'),
-                job_id=job.get('job_id')
+                job_id=job.get('job_id'),
+                job_title=job.get('title', '')
             )
         # Determine recipient
         if self.test_mode:
